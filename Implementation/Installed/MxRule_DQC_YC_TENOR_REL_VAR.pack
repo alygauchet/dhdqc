@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<HEAD>
+<PACKAGE>MxRule_DQC_YC_TENOR_REL_VAR</PACKAGE>
+<NAME>Y curve tenor vs prior valu relative variation — DQC rule</NAME>
+<BUILD_DATE>20260505</BUILD_DATE>
+<LEVEL>OPTIONAL</LEVEL>
+<RELEASE>7.6.0-0</RELEASE>
+<CREATOR>Migration</CREATOR>
+</HEAD>
+
+<BODY>
+<!-- Threshold: CONTROL_SCRIPT on assessed clause data (defaults to 0.1). Returns YES_NO: Y ok, N violated. -->
+<RESULT MODE="XML" ACTION="GETOBJECTS"  VERSION="2"  CHARSET="UTF8" >
+<SMARTRULE FIND="RULE_CODE='DQC_YC_TENOR_REL_VAR'" USER="lf.guimaraes" UPDATE_DATE="05/05/2026" UPDATE_TIME="20:00:00" LABEL='DQC curve tenor variation vs latest prior valu'>
+<T_SMARTRULE CODEFIELDS="RULE_CODE" >
+<R_SMARTRULE CODE=",["RULE_CODE","DQC_YC_TENOR_REL_VAR",]"  LOCAL_ID="0" >
+<ACTIVE >Y</ACTIVE>
+<CONDITION ></CONDITION>
+<DESCRIPTION ></DESCRIPTION>
+<IMPACT ><![CDATA[// arg1: MxYieldCurveValu (controlled)
+// arg2: MxControlClauseData — BUSINESS_FIELD selects tenor pillar; CONTROL_SCRIPT = max relative delta (default 0.1)
+
+obj := arg1
+clauseCtrlData := arg2
+
+businessField := getObject("MxBusinessField", clauseCtrlData.BUSINESS_FIELD)
+if (businessField = null) return getListItemId("YES_NO", "N")
+
+bfCode := businessField.CODE
+threshStr := clauseCtrlData.CONTROL_SCRIPT
+if (threshStr = "") threshStr := "0.1"
+thresh := 0+threshStr
+
+curr := obj.getBusinessFieldValue(bfCode)
+currStr := strcat("", curr)
+if (currStr = "") return getListItemId("YES_NO", "N")
+
+currN := 0+currStr
+
+tab := getObjects("MxYieldCurveValu", "YIELDCURVE="+obj.YIELDCURVE)
+if (tab = "" or arraysize(tab) = 0) return getListItemId("YES_NO", "Y")
+
+prevObj := ""
+prevDate := ""
+
+i := 0
+nb := arraysize(tab)
+while (i < nb) {
+  cand := tab[i]
+  if (cand.id() = obj.id()) {
+    i := i + 1
+    continue
+  }
+  cd := cand.CALCULATION_DATE
+  if (cd = "" or cd >= obj.CALCULATION_DATE) {
+    i := i + 1
+    continue
+  }
+  if (prevDate = "" or cd > prevDate) {
+    prevObj := cand
+    prevDate := cd
+  }
+  i := i + 1
+}
+
+if (prevObj = "") return getListItemId("YES_NO", "Y")
+
+prev := prevObj.getBusinessFieldValue(bfCode)
+prevStr := strcat("", prev)
+if (prevStr = "") return getListItemId("YES_NO", "Y")
+
+prevN := 0+prevStr
+
+if (prevN = 0) {
+  if (currN = 0) return getListItemId("YES_NO", "Y")
+  return getListItemId("YES_NO", "N")
+}
+
+rel := (currN - prevN) / prevN
+if (rel < 0) rel := -rel
+
+if (rel > thresh) return getListItemId("YES_NO", "N")
+return getListItemId("YES_NO", "Y")]]></IMPACT>
+<PRIVACY_LEVEL >SMARTCO</PRIVACY_LEVEL>
+<REEXECUTED_IN_BETWEEN_VERSIONS ></REEXECUTED_IN_BETWEEN_VERSIONS>
+<RULE_CATEGORY >DQC</RULE_CATEGORY>
+<RULE_CODE ><![CDATA[DQC_YC_TENOR_REL_VAR]]></RULE_CODE>
+<RULE_GROUP >COMPUTE</RULE_GROUP>
+<RULE_STATUS >STANDARD</RULE_STATUS>
+<RULE_STATUS_AVAILABILITY >COMP</RULE_STATUS_AVAILABILITY>
+<RULE_TYPE >AUTO</RULE_TYPE>
+<USER_COMMENT ></USER_COMMENT>
+</R_SMARTRULE>
+</T_SMARTRULE>
+<T_SMARTRULE_NAME CODEFIELDS="NAME_LANGUAGE" >
+</T_SMARTRULE_NAME>
+<T_SMARTRULE_TRIGGER CODEFIELDS="TRIGGER_TYPE^TRIGGER_OBJECT" >
+</T_SMARTRULE_TRIGGER>
+<T_SMARTRULE_WFLINK>
+</T_SMARTRULE_WFLINK>
+
+</SMARTRULE>
+</RESULT>
+</BODY>

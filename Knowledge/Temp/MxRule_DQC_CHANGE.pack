@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<HEAD>
+<PACKAGE>DQC Change (176292)</PACKAGE>
+<NAME>DQC Change (176292)</NAME>
+<CONTENT_HASH>f9decc8f9974a9d97040c7838b886cc571f624745daa90feef2e013892d90a8f</CONTENT_HASH>
+<BUILD_DATE>20260504</BUILD_DATE>
+<LEVEL>OPTIONAL</LEVEL>
+<RELEASE>7.6.0-0</RELEASE>
+<CREATOR>Migration</CREATOR>
+</HEAD>
+
+<BODY>
+<!--   Package created by Migration -->
+<!--      creation date: 04/05/2026 17:35:08 -->
+<!--      creation version: null -->
+<!--      source environment: //10.53.108.203:8309/SmartServer -->
+
+<!--MxRule 176292 v6 -->
+<RESULT MODE="XML" ACTION="GETOBJECTS"  VERSION="2"  CHARSET="UTF8" >
+<SMARTRULE FIND="RULE_CODE='DQC_CHANGE'" USER="lf.guimaraes" UPDATE_DATE="22/04/2026" UPDATE_TIME="15:21:06" LABEL='DQC Change'>
+<T_SMARTRULE CODEFIELDS="RULE_CODE" >
+<R_SMARTRULE CODE=",["RULE_CODE","DQC_CHANGE",]"  LOCAL_ID="176292" >
+<ACTIVE >Y</ACTIVE>
+<CONDITION ></CONDITION>
+<DESCRIPTION ></DESCRIPTION>
+<IMPACT ><![CDATA[// arg1: controlled object
+// arg2: MxControlClauseData clause
+
+// --- Initialize objects ---
+securityTest := arg1
+clauseCtrlData := arg2
+
+// --- Get field info ---
+businessField := getObject("MxBusinessField", clauseCtrlData.BUSINESS_FIELD);
+fieldId := businessField.TECH_FIELD
+
+// --- Get class info ---
+className := securityTest.getClassname()
+classObj  := getObjectByCode("SMARTCLASS", className)
+classId   := classObj.id()
+
+// --- Get object ID ---
+objectId := securityTest.id()
+
+// --- Fetch latest audit trail ID ---
+query := 
+  "SELECT A.AUDITTRAIL_ID " +
+  "FROM AUDITTRAIL A, AUDITTRAIL_LINK L " +
+  "WHERE A.AUDITTRAIL_ID = L.AUDITTRAIL_ID " +
+  "AND L.OBJECT_TYPE = " + classId + " " +
+  "AND L.OBJECT = " + objectId + " " +
+  "ORDER BY A.AUDITTRAIL_ID DESC"
+
+result := getSqlData(query)
+
+if (arraysize(result) = 0) return 0
+
+auditTrailLast := result[0]
+auditTrailId    := auditTrailLast[0]
+auditTrail       := getObject("MxAuditTrail", auditTrailId)
+
+// --- Check audit trail details ---
+foreach auditTrail.AUDITTRAIL_DETAIL do {
+  if (auditTrail.FIELD_ID = fieldId) {
+    return getListItemId("YES_NO", "Y")
+  }
+}
+
+return getListItemId("YES_NO", "N")]]></IMPACT>
+<PRIVACY_LEVEL >SMARTCO</PRIVACY_LEVEL>
+<REEXECUTED_IN_BETWEEN_VERSIONS ></REEXECUTED_IN_BETWEEN_VERSIONS>
+<RULE_CATEGORY >DQC</RULE_CATEGORY>
+<RULE_CODE ><![CDATA[DQC_CHANGE]]></RULE_CODE>
+<RULE_GROUP >COMPUTE</RULE_GROUP>
+<RULE_STATUS >STANDARD</RULE_STATUS>
+<RULE_STATUS_AVAILABILITY >COMP</RULE_STATUS_AVAILABILITY>
+<RULE_TYPE >AUTO</RULE_TYPE>
+<USER_COMMENT ></USER_COMMENT>
+</R_SMARTRULE>
+</T_SMARTRULE>
+<T_SMARTRULE_NAME CODEFIELDS="NAME_LANGUAGE" >
+<R_SMARTRULE_NAME CODE=",["NAME_LANGUAGE","0",]"  LOCAL_ID="178925" >
+<CONTEXT_ACCESS_NAME ></CONTEXT_ACCESS_NAME>
+<MENU_ACCESS_NAME ></MENU_ACCESS_NAME>
+<NAME ><![CDATA[DQC Change]]></NAME>
+<NAME_LANGUAGE >0</NAME_LANGUAGE>
+</R_SMARTRULE_NAME>
+</T_SMARTRULE_NAME>
+<T_SMARTRULE_TRIGGER CODEFIELDS="TRIGGER_TYPE^TRIGGER_OBJECT" >
+<R_SMARTRULE_TRIGGER CODE=",["TRIGGER_TYPE","51",]["TRIGGER_OBJECT","DQC_CHANGE",]"  LOCAL_ID="181086" >
+<ICON ></ICON>
+<PROCESS_LOCATION ></PROCESS_LOCATION>
+<SHORTCUT ></SHORTCUT>
+<TRIGGER_OBJECT ><![CDATA[DQC_CHANGE]]></TRIGGER_OBJECT>
+<TRIGGER_PRIORITY ></TRIGGER_PRIORITY>
+<TRIGGER_TYPE >51</TRIGGER_TYPE>
+</R_SMARTRULE_TRIGGER>
+</T_SMARTRULE_TRIGGER>
+<T_SMARTRULE_WFLINK>
+</T_SMARTRULE_WFLINK>
+
+</SMARTRULE>
+</RESULT>
+</BODY>

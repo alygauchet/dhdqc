@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<HEAD>
+<PACKAGE>MxRule_DQC_YC_TENOR_REL_VAR_RATIO</PACKAGE>
+<NAME>Y curve tenor — relative variation ratio (numeric) for DQC</NAME>
+<BUILD_DATE>20260506</BUILD_DATE>
+<LEVEL>OPTIONAL</LEVEL>
+<RELEASE>7.6.0-0</RELEASE>
+<CREATOR>Migration</CREATOR>
+</HEAD>
+
+<BODY>
+<!-- Pair with DATACONTROL_TYPE YC_TENOR_REL_RATIO (NUMERICF). Returns |Δ|/|prior| as percentage points (e.g. 9 = 9%). Target VALUE_OF 10 = 10% cap; clause uses GREATER (>) for defect when above threshold. -->
+<RESULT MODE="XML" ACTION="GETOBJECTS"  VERSION="2"  CHARSET="UTF8" >
+<SMARTRULE FIND="RULE_CODE='DQC_YC_TENOR_REL_VAR_RATIO'" USER="lf.guimaraes" UPDATE_DATE="06/05/2026" UPDATE_TIME="21:05:00" LABEL='DQC curve tenor — relative variation ratio'>
+<T_SMARTRULE CODEFIELDS="RULE_CODE" >
+<R_SMARTRULE CODE=",["RULE_CODE","DQC_YC_TENOR_REL_VAR_RATIO",]"  LOCAL_ID="0" >
+<ACTIVE >Y</ACTIVE>
+<CONDITION ></CONDITION>
+<DESCRIPTION ></DESCRIPTION>
+<IMPACT ><![CDATA[// arg1: MxYieldCurveValu (controlled)
+// arg2: MxControlClauseData — BUSINESS_FIELD selects tenor pillar; returns |Δ|/|prior| in percentage points (e.g. 9 for 9%)
+
+obj := arg1
+clauseCtrlData := arg2
+
+businessField := getObject("MxBusinessField", clauseCtrlData.BUSINESS_FIELD)
+if (businessField = null) return 100
+
+bfCode := businessField.CODE
+
+curr := obj.getBusinessFieldValue(bfCode)
+currStr := strcat("", curr)
+if (currStr = "") return 100
+
+currN := 0+currStr
+
+tab := getObjects("MxYieldCurveValu", "YIELDCURVE="+obj.YIELDCURVE)
+if (tab = "" or arraysize(tab) = 0) return 0
+
+prevObj := ""
+prevDate := ""
+
+i := 0
+nb := arraysize(tab)
+while (i < nb) {
+  cand := tab[i]
+  if (cand.id() = obj.id()) {
+    i := i + 1
+    continue
+  }
+  cd := cand.CALCULATION_DATE
+  if (cd = "" or cd >= obj.CALCULATION_DATE) {
+    i := i + 1
+    continue
+  }
+  if (prevDate = "" or cd > prevDate) {
+    prevObj := cand
+    prevDate := cd
+  }
+  i := i + 1
+}
+
+if (prevObj = "") return 0
+
+prev := prevObj.getBusinessFieldValue(bfCode)
+prevStr := strcat("", prev)
+if (prevStr = "") return 0
+
+prevN := 0+prevStr
+
+if (prevN = 0) {
+  if (currN = 0) return 0
+  return 100
+}
+
+rel := (currN - prevN) / prevN
+if (rel < 0) rel := -rel
+
+return rel * 100]]></IMPACT>
+<PRIVACY_LEVEL >SMARTCO</PRIVACY_LEVEL>
+<REEXECUTED_IN_BETWEEN_VERSIONS ></REEXECUTED_IN_BETWEEN_VERSIONS>
+<RULE_CATEGORY >DQC</RULE_CATEGORY>
+<RULE_CODE ><![CDATA[DQC_YC_TENOR_REL_VAR_RATIO]]></RULE_CODE>
+<RULE_GROUP >COMPUTE</RULE_GROUP>
+<RULE_STATUS >STANDARD</RULE_STATUS>
+<RULE_STATUS_AVAILABILITY >COMP</RULE_STATUS_AVAILABILITY>
+<RULE_TYPE >AUTO</RULE_TYPE>
+<USER_COMMENT ></USER_COMMENT>
+</R_SMARTRULE>
+</T_SMARTRULE>
+<T_SMARTRULE_NAME CODEFIELDS="NAME_LANGUAGE" >
+</T_SMARTRULE_NAME>
+<T_SMARTRULE_TRIGGER CODEFIELDS="TRIGGER_TYPE^TRIGGER_OBJECT" >
+</T_SMARTRULE_TRIGGER>
+<T_SMARTRULE_WFLINK>
+</T_SMARTRULE_WFLINK>
+
+</SMARTRULE>
+</RESULT>
+</BODY>

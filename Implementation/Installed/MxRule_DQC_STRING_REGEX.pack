@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<HEAD>
+<PACKAGE>MxRule_DQC_STRING_REGEX</PACKAGE>
+<NAME>DQC string regex</NAME>
+<BUILD_DATE>20260504</BUILD_DATE>
+<LEVEL>OPTIONAL</LEVEL>
+<RELEASE>7.6.0-0</RELEASE>
+<CREATOR>Migration</CREATOR>
+</HEAD>
+
+<BODY>
+<!-- Reinstall: main row only (avoids duplicate SMARTRULE_NAME). String coercion: strcat("", val) — no toStr() in IMPACT. -->
+<RESULT MODE="XML" ACTION="GETOBJECTS"  VERSION="2"  CHARSET="UTF8" >
+<SMARTRULE FIND="RULE_CODE='DQC_STRING_REGEX'" USER="lf.guimaraes" UPDATE_DATE="04/05/2026" UPDATE_TIME="18:00:00" LABEL='DQC string regex'>
+<T_SMARTRULE CODEFIELDS="RULE_CODE" >
+<R_SMARTRULE CODE=",["RULE_CODE","DQC_STRING_REGEX",]"  LOCAL_ID="176298" >
+<ACTIVE >Y</ACTIVE>
+<CONDITION ></CONDITION>
+<DESCRIPTION ></DESCRIPTION>
+<IMPACT ><![CDATA[// arg1: controlled MxObject (e.g. equity)
+// arg2: MxControlClauseData clause — BUSINESS_FIELD value vs CONTROL_SCRIPT (Java regex, full match)
+
+obj := arg1
+clauseCtrlData := arg2
+
+pattern := clauseCtrlData.CONTROL_SCRIPT
+if (pattern = "") return getListItemId("YES_NO", "N")
+
+businessField := getObject("MxBusinessField", clauseCtrlData.BUSINESS_FIELD)
+if (businessField = null) return getListItemId("YES_NO", "N")
+
+bfCode := businessField.CODE
+fieldVal := obj.getBusinessFieldValue(bfCode)
+strVal := strcat("", fieldVal)
+
+if (strVal = "") return getListItemId("YES_NO", "N")
+
+matched := checkPattern(pattern, strVal)
+if (matched = "1") return getListItemId("YES_NO", "Y")
+return getListItemId("YES_NO", "N")]]></IMPACT>
+<PRIVACY_LEVEL >SMARTCO</PRIVACY_LEVEL>
+<REEXECUTED_IN_BETWEEN_VERSIONS ></REEXECUTED_IN_BETWEEN_VERSIONS>
+<RULE_CATEGORY >DQC</RULE_CATEGORY>
+<RULE_CODE ><![CDATA[DQC_STRING_REGEX]]></RULE_CODE>
+<RULE_GROUP >COMPUTE</RULE_GROUP>
+<RULE_STATUS >STANDARD</RULE_STATUS>
+<RULE_STATUS_AVAILABILITY >COMP</RULE_STATUS_AVAILABILITY>
+<RULE_TYPE >AUTO</RULE_TYPE>
+<USER_COMMENT ></USER_COMMENT>
+</R_SMARTRULE>
+</T_SMARTRULE>
+<T_SMARTRULE_NAME CODEFIELDS="NAME_LANGUAGE" >
+</T_SMARTRULE_NAME>
+<T_SMARTRULE_TRIGGER CODEFIELDS="TRIGGER_TYPE^TRIGGER_OBJECT" >
+</T_SMARTRULE_TRIGGER>
+<T_SMARTRULE_WFLINK>
+</T_SMARTRULE_WFLINK>
+
+</SMARTRULE>
+</RESULT>
+</BODY>

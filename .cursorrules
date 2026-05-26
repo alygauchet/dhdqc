@@ -1,0 +1,92 @@
+# DH Workflow Management - Cursor Rules
+
+**Canonical agent skills** live in **`Skills/agent-skills/`** (also available under **`.cursor/skills`**, a symlink to the same tree). Cursor loads skills from `.cursor/skills` automatically when this folder is open.
+
+## Project Context
+
+This workspace contains a DH (DataHub) project for NeoXam. The project includes specifications, implementations, models, and documentation for feature development or enhancement.
+
+## Technology Stack
+
+- **DataHub**: NeoXam DataHub platform with XML-based pack files (.pack)
+- **Python**: Scripts for automation and pack file manipulation
+- **PowerShell**: Windows automation scripts (for Windows users)
+- **Markdown**: Documentation and specifications
+- **Business Rules**: DataHub SmartRule language (custom scripting)
+- **Mermaid**: For embedding schemas to .md files
+
+## Project Skills
+
+Domain-specific guidance is in `.cursor/skills/` (same as `Skills/agent-skills/`). Apply these when relevant:
+
+| Skill | Use when |
+|-------|----------|
+| `datahub-pack-creation-modification` | Creating or editing pack files, lists, workflows |
+| `datahub-specification-writing` | Writing specs in Specification/ |
+| `datahub-business-rules` | Writing SmartRule logic, status management |
+| `datahub-pack-installation` | Installing packages via MCP |
+| `datahub-object-retrieval` | Fetching objects via getObjectPackage API |
+| `datahub-object-search` | Querying DataHub via REST search API, listing objects, retrieving details without getObjectPackage |
+| `datahub-data-model` | Understanding data model structure, MxClassDef, MxList |
+| `datahub-testing-validation` | Testing packs, validating IMPACT syntax, smoke tests after install |
+| `datahub-mcp-project-setup` | Configuring or syncing the DataHub MCP from `.datahub-workspace.json` (`datahub-mcp-dev-{projectName}`) |
+
+**Related skills** (when combining): pack-creation-modification → data-model (for MxClassDef/MxList structure); object-retrieval → pack-creation-modification (retrieved packs inform new packs); business-rules → br-knowledge MCP (optimized IMPACT code); pack-installation → pack-creation-modification (import order, dependencies).
+
+## File Organization
+
+- **Specification/**: Functional specifications and user stories. All specifications produced or updated by the assistant must be in this folder. Use `{projectName}_SPEC_*.md` naming, where `projectName` comes from `workspace.projectName` in `.datahub-workspace.json`. Agents may read/write
+- **Implementation/**: Pack files ready for import. Agents may read/write
+- **Implementation/Installed/**: Archive folder for successfully installed packages. Agents may read/write
+- **Knowledge/Model/**: Data model definitions, class structures (MxClassDef, MxList definitions), schemas. Agents may read/write
+- **Knowledge/Model/Objects/**: Retrieved object packages from getObjectPackage — instance data. Filenames: `{ClassName}_{ObjectCode}.pack`. Agents may read/write
+- **Implementation/Temp/**: Temporary storage for getObjectPackage. Remove packages already in Knowledge/Model/Objects to avoid duplication. Agents may read/write
+- **Knowledge/Model/Templates/**: Example and template packages for reference. Agents may write
+- **Scripts/**: All scripts produced by automation (Python, PowerShell, etc.). Agents may read/write
+- **Knowledge/Reference/**: Reference documents, presentations and examples. Read-only for agents
+- **User Documentation/**: End-user guides. Agents may write
+- **Images/**: Diagrams and screenshots. Read-only for agents
+
+## Code Style (General)
+
+### Python Scripts
+
+- Use Python 3 syntax, PEP 8
+- Handle file encoding explicitly (UTF-8)
+- Use raw strings (r"...") for Windows file paths
+- Add error handling with clear messages
+
+### When Writing Python Scripts
+
+- **Place all scripts in `Scripts/`** — Any script produced (Python, PowerShell, etc.) must be saved in the `Scripts/` folder
+- Check for existing content before modifications
+- Provide clear success/error messages
+- Use defensive programming (check for None, empty strings)
+- Preserve original file structure when possible
+
+## Domain Knowledge
+
+- Depending on the project domain
+
+## DataHub Object Links
+
+When suggesting the user check an object in DataHub, **always provide a direct clickable link** instead of navigation instructions (e.g. "Administration → Lists → …").
+
+**Format**: `{datahub.url}/datahub/#/{ClassName}/{objectId}`
+
+**Examples** (use markdown `[label](url)` so links are clickable):
+- List (MxList): [MxList/234](http://nxdh-docker-product/datahub/#/MxList/234)
+- Control (MxDataControl): [MxDataControl/526](http://nxdh-docker-product/datahub/#/MxDataControl/526)
+- Security (MxSecurity): [MxSecurity/123](http://nxdh-docker-product/datahub/#/MxSecurity/123)
+- Class definition (MxClassDef): [MxClassDef/575](http://nxdh-docker-product/datahub/#/MxClassDef/575) — use the **numeric database ID**, not CLASS_NAME (e.g. MxWorkflow → 575).
+
+Use the `id` from API responses (search, getObjectPackage) or from pack `LOCAL_ID` / comment (e.g. `<!--MxClassDef 575 v11 -->`). Read `datahub.url` from `.datahub-workspace.json`. **Always use markdown link syntax** `[label](url)` so links are clickable.
+
+## Configuration
+
+All configuration values are read from `.datahub-workspace.json`:
+
+- **Project Name**: `{workspace.projectName}` – used for specification naming (`{projectName}_SPEC_*.md`) and elsewhere
+- **MCP Server Path**: `{workspace.centralizedFolder}/{workspace.mcpCentralizedFolder}/mcp-datahub-server/`
+- **DataHub URL**: `{datahub.url}`
+- **Authentication**: Username `{datahub.username}`, Password `{datahub.password}`

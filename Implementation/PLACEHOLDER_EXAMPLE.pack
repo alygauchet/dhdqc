@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<HEAD>
+<PACKAGE>PLACEHOLDER_EXAMPLE</PACKAGE>
+<NAME>Placeholder Example Pack</NAME>
+<BUILD_DATE>YYYYMMDD</BUILD_DATE>
+<LEVEL>OPTIONAL</LEVEL>
+<RELEASE>7.5.0</RELEASE>
+<CREATOR>Template</CREATOR>
+</HEAD>
+
+<BODY>
+<RESULT MODE="XML" ACTION="GETOBJECTS" VERSION="2" CHARSET="UTF8">
+<!-- Replace this with your package content. See Knowledge/Model/Templates/ for examples. -->
+</RESULT>
+</BODY>
