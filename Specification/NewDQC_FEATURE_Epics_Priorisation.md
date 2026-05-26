@@ -49,12 +49,11 @@ This document tracks and prioritises epics for the DQC (Data Quality Control) mo
 | 10 | DHRD-112665 | Trigger control rule upon field changed | DQC - Trigger control rule execution upon field changed | High | L | 7.7.0-0  | Planned | Review with Squad Front Done no impact on web ui - synchronise with Squad Front sev team|
 | 11 | DHRD-113776 | Trigger control rule upon object to be saved | DQC - Trigger control on object to be saved - Not Interactive| High | M | 7.7.0-0 | Planned | Review the existing code to fix and enable the feature for import only 
 | 12 | DHRD-92538 | Field from linked business class | DQC - Configure and execute control with field from linked business class | Critical | | 7.8.0-0 | Planned | Analysis and solution design to complete Ex. Equity data to be compared to the Equity Issuer's data |
-| 13 | DHRD-110155 | Control Builder | DQC Control Builder - Configure control clause through a specific component in the web client | High | L | 7.8.0-0 | Planned | Analysis and solution design to complete Ex. Equity data to be compared to the Equity Issuer's data | Read Only and  Edit Mode using the API |
-| 14 | DHRD-119182 | Execute control on historical time series data | DQC - Execute control on historical time series data | High| | | Backlog | Depend on approach validation for business dictionnary configuration|
-| 15 | DHRD-117146 | Trigger control rule upon object to be saved | DQC - Trigger control on object to be saved - Interactive| Medium | L | 7.8.0-0  | Planned | Revieww the need to adapt to visage|
-| 16 | DHRD-119182 | Execute control on historical time series data | DQC - Execute control on historical time series data | High| | | Backlog | Depend on approach validation for business dictionnary configuration|
+| 13 | DHRD-110155 | Control Builder | DQC Control Builder - Configure control clause through a specific component in the web client | High | L | 7.8.0-0 | Planned | Read Only and  Edit Mode using the API |
+| 14 | DHRD-117146 | Trigger control rule upon object to be saved | DQC - Trigger control on object to be saved - Interactive| Medium | L | 7.8.0-0  | Planned | Review the need to adapt to visage|
+| 15 | DHRD-119182 | Execute control on historical time series data | DQC - Execute control on historical time series data | High| | | Backlog | Depend on approach validation for business dictionnary configuration|
 | 17 | DHRD-119240 | Scope based control | DQC - Scope based control clause configuration and execution | Low | | | Backlog | To be used only with in List / not in List operators |
-| 18 | DHRD-119182 | Execute control on historical time series data | DQC - Execute control on historical time series data | High|  | 7.X | Planned | Depend on approach validation for business dictionnary configuration|
+| 18 | DHRD-119182 | Execute control on historical time series data | DQC - Execute control on historical time series data | High| | | Backlog | Depend on approach validation for business dictionnary configuration|
 | 19 | DHRD-112667 | Trigger control rule upon field to be changed | DQC - Trigger control rule execution upon field to be changed |Low | | | Backlog | |
 
 **Priority scale:** Critical | High | Medium | Low  
