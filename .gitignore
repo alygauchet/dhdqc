@@ -1,0 +1,32 @@
+# DataHub workspace config (contains credentials)
+.datahub-workspace.json
+
+# MCP config (may contain tokens/credentials)
+.mcp.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.eggs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE (keep .cursor/ for template)
+.idea/
+*.swp
+*.swo
+*~
+
+# Temp and build (ignore contents but keep Implementation/Temp/ with .gitkeep)
+Implementation/Temp/*
+!Implementation/Temp/.gitkeep
+*.log
