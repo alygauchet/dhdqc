@@ -3,7 +3,11 @@
     "allow": [
       "Bash(git -C \"c:\\\\Users\\\\aminata.lygauchet\\\\Repositories\\\\DH-DQC\\\\dhdqc\" add .gitignore)",
       "Bash(git -C \"c:\\\\Users\\\\aminata.lygauchet\\\\Repositories\\\\DH-DQC\\\\dhdqc\" commit -m \"chore: add .mcp.json to .gitignore\")",
-      "Bash(git -C \"c:\\\\Users\\\\aminata.lygauchet\\\\Repositories\\\\DH-DQC\\\\dhdqc\" push)"
+      "Bash(git -C \"c:\\\\Users\\\\aminata.lygauchet\\\\Repositories\\\\DH-DQC\\\\dhdqc\" push)",
+      "Bash(git -C \"c:\\\\Users\\\\aminata.lygauchet\\\\Repositories\\\\DH-DQC\\\\dhdqc\" status)",
+      "Bash(git -C 'c:\\\\Users\\\\aminata.lygauchet\\\\Repositories\\\\DH-DQC\\\\dhdqc' commit -m ' *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
