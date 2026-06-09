@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding="UTF-8" ?>
+<HEAD>
+<PACKAGE>CHECK_FIELD_DS_IN_CONTROLS</PACKAGE>
+<NAME>CHECK_FIELD_DS_IN_CONTROLS</NAME>
+<BUILD_DATE>20260529</BUILD_DATE>
+<LEVEL>OPTIONAL</LEVEL>
+<RELEASE>7.7.0-0-SNAPSHOT</RELEASE>
+<CREATOR>Migration</CREATOR>
+</HEAD>
+
+<BODY>
+<!--MxRule - New Rule CHECK_FIELD_DS_IN_CONTROLS -->
+<RESULT MODE="XML" ACTION="GETOBJECTS"  VERSION="2"  CHARSET="UTF8" >
+<SMARTRULE FIND="RULE_CODE='CHECK_FIELD_DS_IN_CONTROLS'" USER="BAMS\aminata.lygauchet" LABEL='Check Field Changed Data Structure In Controls'>
+<T_SMARTRULE CODEFIELDS="RULE_CODE" >
+<R_SMARTRULE CODE=",["RULE_CODE","CHECK_FIELD_DS_IN_CONTROLS",]" >
+<ACTIVE >Y</ACTIVE>
+<CONDITION ><![CDATA[$,["RULE_CODE","CHECK_FIELD_DS_IN_CONTROLS",]^CONDITION]]></CONDITION>
+<DESCRIPTION ><![CDATA[Blocks saving a Control Execution Rule if, for a Field Changed trigger, the specified Data Structure is not assessed by any of the controls listed in the rule.]]></DESCRIPTION>
+<IMPACT ><![CDATA[fieldchanged := getListitemId("RULE_TRIGGER_TYPE", 41);
+
+// Build set of Business Field IDs assessed by the controls of this rule
+// Format ",id1,id2," allows safe "," + id + "," substring search
+assessedBfIds := ",";
+hasControls   := false;
+
+if (obj.first("CONTROLEXECRULE_CONTROL")) {
+    do {
+        ctrlId := obj.CONTROL;
+        if (ctrlId != "") {
+            hasControls := true;
+            ctrl := getObject("MxDataControl", ctrlId);
+            if (ctrl.first("DATACONTROL_CLAUSES")) {
+                do {
+                    clauseDataId := ctrl.ASSESSED_DATA;
+                    if (clauseDataId != "") {
+                        clauseData := getObject("MxControlClauseData", clauseDataId);
+                        bfId := clauseData.BUSINESS_FIELD;
+                        if (bfId != "") {
+                            assessedBfIds := assessedBfIds + bfId + ",";
+                        }
+                    }
+                } while (ctrl.next("DATACONTROL_CLAUSES"))
+            }
+        }
+    } while (obj.next("CONTROLEXECRULE_CONTROL"))
+}
+
+// Skip validation if no individual controls are listed (group-based config only)
+if (!hasControls) {
+    return;
+}
+
+// Validate each Field Changed trigger's DATA_STRUCTURE
+if (obj.first("CONTROLEXECRULE_TRIGGER")) {
+    do {
+        if ((obj.TRIGGER_TYPE = fieldchanged) and (obj.DATA_STRUCTURE != "")) {
+            if (indexOf(assessedBfIds, "," + obj.DATA_STRUCTURE + ",") < 0) {
+                return array("EXIT_1", "Field Changed trigger: the Data Structure specified is not assessed by any control of this Execution Rule.");
+            }
+        }
+    } while (obj.next("CONTROLEXECRULE_TRIGGER"))
+}]]></IMPACT>
+<PRIVACY_LEVEL >SMARTCO</PRIVACY_LEVEL>
+<REEXECUTED_IN_BETWEEN_VERSIONS ></REEXECUTED_IN_BETWEEN_VERSIONS>
+<RULE_CATEGORY >DQC</RULE_CATEGORY>
+<RULE_CODE ><![CDATA[CHECK_FIELD_DS_IN_CONTROLS]]></RULE_CODE>
+<RULE_GROUP >ADM</RULE_GROUP>
+<RULE_STATUS >STANDARD</RULE_STATUS>
+<RULE_STATUS_AVAILABILITY >COMP</RULE_STATUS_AVAILABILITY>
+<RULE_TYPE >MONO</RULE_TYPE>
+<USER_COMMENT ></USER_COMMENT>
+</R_SMARTRULE>
+</T_SMARTRULE>
+<T_SMARTRULE_NAME CODEFIELDS="NAME_LANGUAGE" >
+<R_SMARTRULE_NAME CODE=",["NAME_LANGUAGE","0",]" >
+<CONTEXT_ACCESS_NAME ></CONTEXT_ACCESS_NAME>
+<MENU_ACCESS_NAME ></MENU_ACCESS_NAME>
+<NAME ><![CDATA[Check Field Changed Data Structure In Controls]]></NAME>
+<NAME_LANGUAGE >0</NAME_LANGUAGE>
+</R_SMARTRULE_NAME>
+</T_SMARTRULE_NAME>
+<T_SMARTRULE_TRIGGER CODEFIELDS="TRIGGER_TYPE^TRIGGER_OBJECT" >
+<R_SMARTRULE_TRIGGER CODE=",["TRIGGER_TYPE","41",]["TRIGGER_OBJECT","TRIGGER_TYPE",]" >
+<ICON ></ICON>
+<PROCESS_LOCATION ></PROCESS_LOCATION>
+<SHORTCUT ></SHORTCUT>
+<TRIGGER_OBJECT ><![CDATA[TRIGGER_TYPE]]></TRIGGER_OBJECT>
+<TRIGGER_PRIORITY ></TRIGGER_PRIORITY>
+<TRIGGER_TYPE >41</TRIGGER_TYPE>
+</R_SMARTRULE_TRIGGER>
+<R_SMARTRULE_TRIGGER CODE=",["TRIGGER_TYPE","41",]["TRIGGER_OBJECT","DATA_STRUCTURE",]" >
+<ICON ></ICON>
+<PROCESS_LOCATION ></PROCESS_LOCATION>
+<SHORTCUT ></SHORTCUT>
+<TRIGGER_OBJECT ><![CDATA[DATA_STRUCTURE]]></TRIGGER_OBJECT>
+<TRIGGER_PRIORITY ></TRIGGER_PRIORITY>
+<TRIGGER_TYPE >41</TRIGGER_TYPE>
+</R_SMARTRULE_TRIGGER>
+<R_SMARTRULE_TRIGGER CODE=",["TRIGGER_TYPE","41",]["TRIGGER_OBJECT","CONTROL",]" >
+<ICON ></ICON>
+<PROCESS_LOCATION ></PROCESS_LOCATION>
+<SHORTCUT ></SHORTCUT>
+<TRIGGER_OBJECT ><![CDATA[CONTROL]]></TRIGGER_OBJECT>
+<TRIGGER_PRIORITY ></TRIGGER_PRIORITY>
+<TRIGGER_TYPE >41</TRIGGER_TYPE>
+</R_SMARTRULE_TRIGGER>
+<R_SMARTRULE_TRIGGER CODE=",["TRIGGER_TYPE","13",]["TRIGGER_OBJECT","",]" >
+<ICON ></ICON>
+<PROCESS_LOCATION ></PROCESS_LOCATION>
+<SHORTCUT ></SHORTCUT>
+<TRIGGER_OBJECT ></TRIGGER_OBJECT>
+<TRIGGER_PRIORITY ></TRIGGER_PRIORITY>
+<TRIGGER_TYPE >13</TRIGGER_TYPE>
+</R_SMARTRULE_TRIGGER>
+</T_SMARTRULE_TRIGGER>
+<T_SMARTRULE_WFLINK>
+</T_SMARTRULE_WFLINK>
+
+<RF CLASS="Condition" CODE="$,["RULE_CODE","CHECK_FIELD_DS_IN_CONTROLS",]^CONDITION" VERSION=0>
+<RF CLASS="classlist">
+<RF CLASS="lib.system.objects.Condition$ClassDesc">
+<tablename>CONTROLEXECRULE</tablename>
+<classlabel>MxControlExecutionRule</classlabel>
+</RF>
+</RF>
+</RF>
+</SMARTRULE>
+</RESULT>
+</BODY>
